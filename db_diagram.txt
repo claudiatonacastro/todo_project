@@ -1,0 +1,3 @@
+brew install graphviz
+pip install pydotplus
+python manage.py graph_models -a -o diagrama.png
