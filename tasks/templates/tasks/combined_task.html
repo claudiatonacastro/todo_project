@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Consultas combinadas{% endblock %}
+{% block content %}
+
+<h3>🔗 Consultas combinadas</h3>
+<p class="text-muted">
+  Q1: tareas con fecha <strong>{{ q1_day }}</strong>.
+  Q2: tareas con prioridad <strong>{{ prio }}</strong>.
+</p>
+
+<!-- Formulario de filtros -->
+<form method="get" class="row g-2 align-items-end mb-3">
+  <div class="col-auto">
+    <label class="form-label">Prioridad (Q2)</label>
+    <select name="prio" class="form-select">
+      <option value="Alta"  {% if prio == "Alta" %}selected{% endif %}>Alta</option>
+      <option value="Media" {% if prio == "Media" %}selected{% endif %}>Media</option>
+      <option value="Baja"  {% if prio == "Baja" %}selected{% endif %}>Baja</option>
+    </select>
+  </div>
+
+  <div class="col-auto">
+    <label class="form-label">Fecha (Q1)</label>
+    <input type="date" name="day" class="form-control" value="{{ q1_day_str }}">
+  </div>
+
+  <input type="hidden" name="op" value="{{ op }}">
+  <div class="col-auto">
+    <button class="btn btn-primary btn-sm" type="submit">Aplicar</button>
+  </div>
+</form>
+
+<!-- Botones para seleccionar operación -->
+<div class="btn-group mb-3">
+  <a href="?op=union&prio={{ prio }}&day={{ q1_day_str }}"
+     class="btn btn-outline-primary {% if op == 'union' %}active{% endif %}">Unión</a>
+
+  <a href="?op=intersection&prio={{ prio }}&day={{ q1_day_str }}"
+     class="btn btn-outline-primary {% if op == 'intersection' %}active{% endif %}">Intersección</a>
+</div>
+
+<!-- Contenedor de tarjetas -->
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  {% for t in items %}
+  <div class="col">
+    <div class="card custom-card {% if t.completed %}completed{% else %}pending{% endif %}">
+      <div class="card-body">
+        <h5 class="card-title">{{ t.id }} - {{ t.title }}</h5>
+
+        {% if t.due_date %}
+          <span class="task-date">Fecha de vencimiento: {{ t.due_date }}</span>
+        {% endif %}
+
+        <span class="task-date">
+          Categoría: {{ t.category__name|default:"Sin categoría" }}
+        </span>
+
+        <p class="mt-2">
+          <strong>Prioridad:</strong>
+          <span class="badge
+            {% if t.priority == 'Alta' %}bg-danger
+            {% elif t.priority == 'Media' %}bg-warning
+            {% else %}bg-success{% endif %}">
+            {{ t.priority }}
+          </span>
+        </p>
+
+        {% if t.description %}
+          <p class="card-text text-muted">
+            {{ t.description|slice:":50" }}{% if t.description|length > 50 %}...{% endif %}
+          </p>
+        {% endif %}
+
+        <!-- Enlace "Ver más" con mismo estilo -->
+        <a href="#" class="link-opacity-75"
+           data-bs-toggle="modal"
+           data-bs-target="#taskModal{{ t.id }}">
+          Ver más
+        </a>
+
+        <!-- Modal por tarjeta -->
+        <div class="modal fade" id="taskModal{{ t.id }}" tabindex="-1"
+             aria-labelledby="taskModalLabel{{ t.id }}" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="taskModalLabel{{ t.id }}">
+                  {{ t.id }} - {{ t.title }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div class="modal-body">
+                {% if t.due_date %}
+                  <p class="task-date">Fecha de vencimiento: {{ t.due_date }}</p>
+                {% endif %}
+                <p class="task-date">Categoría: {{ t.category__name|default:"Sin categoría" }}</p>
+                <p><strong>Prioridad:</strong> {{ t.priority }}</p>
+                {% if t.description %}
+                  <hr>
+                  <p>{{ t.description }}</p>
+                {% endif %}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- /.card-body -->
+    </div>   <!-- /.card -->
+  </div>     <!-- /.col -->
+  {% empty %}
+  <div class="col">
+    <div class="list-group-item">Sin resultados.</div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

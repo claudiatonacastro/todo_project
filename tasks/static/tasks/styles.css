@@ -1,0 +1,119 @@
+/*Estilos de la tarjeta */
+.custom-card {
+    min-height: 280px; /* Aumentar la altura mínima */
+    max-height: 280px; /* Aumentar la altura máxima */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Mantiene los elementos organizados */
+    padding: 15px;
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+/*Colores de fondo según estado */
+.custom-card.completed {
+    background-color: rgb(229, 255, 229); /* Verde para tareas completadas */
+}
+
+.custom-card.pending {
+    background-color: rgb(255, 248, 219); /* Amarillo para tareas pendientes */
+}
+
+/*Cuerpo de la tarjeta */
+.custom-card .card-body {
+    flex-grow: 1; /* Permite que el contenido ocupe el espacio disponible */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Asegura que los botones se queden abajo */
+}
+
+/*Texto de la tarjeta */
+.custom-card .card-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.custom-card .card-text {
+    font-size: 12px;
+    flex-grow: 1; /* Permite que el texto se expanda dentro de la tarjeta */
+    overflow: hidden;
+    display: -webkit-box;
+    line-clamp: 3; /* Limita a 3 líneas */
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+
+/*Fecha de vencimiento */
+.task-date {
+    display: block; /* Mantiene la fecha en una línea separada */
+    font-size: 12px;
+    color: rgb(120, 120, 120); /* Gris tenue */
+    margin-top: 4px;
+}
+
+/*Prioridad */
+.priority-badge {
+    display: inline-block;
+    padding: 5px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.priority-high {
+    background-color: rgb(255, 77, 77); /* Rojo */
+    color: white;
+}
+
+.priority-medium {
+    background-color: rgb(255, 204, 77); /* Amarillo */
+    color: black;
+}
+
+.priority-low {
+    background-color: rgb(77, 204, 77); /* Verde */
+    color: white;
+}
+
+/*Botones dentro de la tarjeta */
+.card-buttons {
+    display: flex;
+    justify-content: space-between; /* Asegura que los botones estén bien distribuidos */
+    flex-wrap: wrap; /* Permite que se ajusten si hay poco espacio */
+    gap: 5px;
+    margin-top: auto; /* Asegura que los botones se alineen abajo */
+    padding-top: 10px;
+}
+
+/*Estilo de botones */
+.card-buttons a {
+    flex-grow: 1; /* Hace que los botones tengan el mismo ancho */
+    text-align: center;
+    font-weight: normal; /* Quita la negrita */
+    padding: 5px;
+    border-radius: 5px;
+}
+
+/*Botón deshabilitado */
+.card-buttons .disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/*Enlace "Ver más" con opacidad */
+.link-opacity-75 {
+    opacity: 0.75;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+/*Footer */
+.footer {
+    text-align: center;
+    color: rgb(79, 79, 79);
+    font-size: 11px;
+    margin-top: 20px;
+    padding: 10px;
+}

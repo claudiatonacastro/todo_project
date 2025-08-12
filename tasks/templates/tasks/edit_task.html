@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Lista de Tareas{% endblock %}
+{% block content %}
+    
+    <div class="container mt-4">
+        <h2 class="text-center">Editar Tarea</h2>
+
+        <!-- Indicar el estado actual de la tarea -->
+        <div class="alert {% if task.completed %}alert-success{% else %}alert-warning{% endif %}" role="alert">
+            Estado actual: <strong>{% if task.completed %}Completada ✅{% else %}Pendiente ⏳{% endif %}</strong>
+        </div>
+
+        <form method="POST" class="mb-3">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Título de la tarea</label>
+                {{ form.title }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Descripción</label>
+                {{ form.description }}
+            </div>
+
+           <div class="mb-3">
+                <label class="form-label">Fecha de Vencimiento</label>
+                {{ form.due_date }}
+                {% for error in form.due_date.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Prioridad</label>
+                {{ form.priority.errors }}
+                {{ form.priority }}
+            </div>
+
+            <div>
+                <label class="form-label">Categoría</label>
+                {{ form.category.errors }}
+                {{ form.category }}
+                <br>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a href="{% url 'task_list' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+    <br>
+{% endblock %}

@@ -1,0 +1,1 @@
+cp /Users/ctona/Desktop/MATERIAS/DJANGO/development/todo_project/db.sqlite3 "/Volumes/CLAUDIAT/EC0835/respaldo_todo_$(date +%Y%m%d).sqlite3"

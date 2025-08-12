@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Papelera de Tareas{% endblock %}
+{% block content %}
+
+<h3>🗑️ Papelera de Tareas</h3>
+<p class="text-muted">Tareas eliminadas (soft delete). Puedes restaurarlas o borrarlas definitivamente.</p>
+
+{% if tasks %}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  {% for t in tasks %}
+  <div class="col">
+    <div class="card border-secondary">
+      <div class="card-body">
+        <h5 class="card-title">{{ t.id }} - {{ t.title }}</h5>
+
+        {% if t.due_date %}
+          <span class="task-date">Fecha de vencimiento: {{ t.due_date }}</span>
+        {% endif %}
+
+        <span class="task-date">
+          Categoría:
+          {% if t.category %}
+            {{ t.category.name }}
+          {% else %}
+            Sin categoría
+          {% endif %}
+        </span>
+
+        <p class="mt-2">
+          <strong>Prioridad:</strong>
+          <span class="badge
+            {% if t.priority == 'Alta' %}bg-danger
+            {% elif t.priority == 'Media' %}bg-warning
+            {% else %}bg-success{% endif %}">
+            {{ t.priority }}
+          </span>
+        </p>
+
+        {% if t.description %}
+          <p class="card-text text-muted">
+            {{ t.description|slice:":50" }}{% if t.description|length > 50 %}...{% endif %}
+          </p>
+        {% endif %}
+        
+        <div class="mt-3 d-flex gap-2">
+          <a href="{% url 'task_restore' pk=t.id %}" class="btn btn-sm btn-success">Restaurar</a>
+          <a href="{% url 'task_hard_delete' pk=t.id %}" class="btn btn-sm btn-danger"
+             onclick="return confirm('¿Eliminar definitivamente esta tarea?');">
+            Eliminar definitivamente
+          </a>
+        </div>
+
+        <p class="text-muted mt-2 mb-0">
+          Eliminada el: {{ t.deleted_at|date:"d/m/Y H:i" }}
+        </p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+  <div class="alert alert-info">No hay tareas en la papelera.</div>
+{% endif %}
+
+{% endblock %}

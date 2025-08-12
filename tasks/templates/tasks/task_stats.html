@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Lista de Tareas{% endblock %}
+{% block content %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <h3>📊 Gráficos</h3>
+  <br>
+  <h1>Consultas de agrupación</h1>
+  <br>
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <h6>Tareas por categoría</h6>
+      <canvas id="chartCategorias"></canvas>
+    </div>
+    <div class="col-md-6 mb-4">
+      <h6>Pendientes vs Completadas por prioridad</h6>
+      <canvas id="chartPrioridades"></canvas>
+    </div>
+    <div class="col-12 mb-4">
+      <h6>Tareas por fecha de vencimiento</h6>
+      <canvas id="chartPorDia"></canvas>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Datos desde Django
+    const catLabels = {{ cat_labels|safe }};
+    const catTotals = {{ cat_totals|safe }};
+
+    const priorLabels = {{ prior_labels|safe }};
+    const priorPend = {{ prior_pendientes|safe }};
+    const priorComp = {{ prior_completadas|safe }};
+
+    const diaLabels = {{ dia_labels|safe }};
+    const diaTotals = {{ dia_totals|safe }};
+
+    // Pie: Tareas por categoría
+    new Chart(document.getElementById('chartCategorias'), {
+      type: 'pie',
+      data: {
+        labels: catLabels,
+        datasets: [{ data: catTotals }]
+      }
+    });
+
+    // Barras: Pendientes vs completadas por prioridad
+    new Chart(document.getElementById('chartPrioridades'), {
+      type: 'bar',
+      data: {
+        labels: priorLabels,
+        datasets: [
+          { label: 'Pendientes', data: priorPend },
+          { label: 'Completadas', data: priorComp }
+        ]
+      },
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    // Línea: Tareas por fecha de vencimiento
+    new Chart(document.getElementById('chartPorDia'), {
+      type: 'line',
+      data: {
+        labels: diaLabels,
+        datasets: [{ label: 'Tareas', data: diaTotals }]
+      },
+      options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+  </script>
+
+  <!-- TAREAS NO COMPLETADAS VENCIDAS POR DIA
+  <h5 class="mt-4">Tareas vencidas por categoría</h5>
+  <canvas id="chartVencidas"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const vencLabels = {{ venc_labels|safe }};
+    const vencTotals = {{ venc_totals|safe }};
+
+    new Chart(document.getElementById('chartVencidas'), {
+      type: 'bar',
+      data: {
+        labels: vencLabels,
+        datasets: [{
+          label: 'Vencidas (no completadas)',
+          data: vencTotals
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+      }
+    });
+    </script>
+  -->
+{% endblock %}

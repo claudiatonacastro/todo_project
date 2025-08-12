@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Lista de Tareas{% endblock %}
+{% block content %}
+
+    <div class="container mt-4">
+        <h2 class="text-center">Lista de Tareas</h2>
+
+        <!-- Formulario para agregar nueva tarea -->
+        <div class="container-fluid">
+            <form method="POST" class="mb-3">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <div class="mb-3">
+                    {{ form.title }}
+                    <div class="text-danger">{{ form.title.errors }}</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Fecha de Vencimiento</label>
+                    {{ form.due_date }}
+                    {% for error in form.due_date.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Prioridad</label>
+                    {{ form.priority }}
+                    <div class="text-danger">{{ form.priority.errors }}</div>
+                </div>
+
+                <div>
+                    <label class="form-label">Categoría</label>
+                    {{ form.category }}
+                    <div class="text-danger">{{ form.category.errors }}</div>
+                    <br>
+                </div>
+
+                <div class="mb-3">           
+                    {{ form.description }}
+                    <div class="text-danger">{{ form.description.errors }}</div>
+                </div>
+
+                <button class="btn btn-primary ms-2" type="submit">Agregar</button>
+            </form>
+        </div>
+
+        <div class="btn-group mb-3">
+            <a href="?status=all"
+            class="btn btn-outline-secondary btn-sm {% if status == 'all' %}active{% endif %}">
+            Todas
+            </a>
+            <a href="?status=pending"
+            class="btn btn-outline-warning btn-sm {% if status == 'pending' %}active{% endif %}">
+            Pendientes
+            </a>
+            <a href="?status=completed"
+            class="btn btn-outline-success btn-sm {% if status == 'completed' %}active{% endif %}">
+            Completadas
+            </a>
+        </div>
+
+        <!-- Contenedor de las tarjetas -->
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for task in tasks %}
+            <div class="col">
+                <div class="card custom-card {% if task.completed %}completed{% else %}pending{% endif %}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ task.id }} - {{ task.title }}</h5>
+                        
+                        {% if task.due_date %}
+                            <span class="task-date">Fecha de vencimiento: {{ task.due_date }}</span>
+                        {% endif %}
+
+                        {% if task.category %}
+                            <span class="task-date">
+                                Categoría: {{ task.category.name }}
+                            </span>
+                        {% else %}
+                            <span class="task-date">
+                                Categoría: Sin categoría
+                            </span>
+                        {% endif %}
+
+                        <!-- Muestra la prioridad con colores distintivos -->
+                        <p>
+                            <strong>Prioridad:</strong>
+                            <span class="badge 
+                                {% if task.priority == 'Alta' %}bg-danger
+                                {% elif task.priority == 'Media' %}bg-warning
+                                {% else %}bg-success{% endif %}">
+                                {{ task.priority }}
+                            </span>
+                        </p>
+                    
+                        {% if task.description %}
+                            <p class="card-text text-muted">
+                                {{ task.description|slice:":50" }}{% if task.description|length > 50 %}...{% endif %}
+                            </p>
+                        {% endif %}
+                        
+                        <!-- Enlace "Ver más" con opacidad del 50% -->
+                        <a href="#" class="link-opacity-75" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}">
+                            Ver más
+                        </a>
+                        <br>    
+                        <!-- Contenedor de los botones -->
+                        <div class="card-buttons">
+                            {% if not task.completed %}
+                                <a href="{% url 'complete_task' task.id %}" class="btn btn-success btn-sm no-bold">Completar</a>
+                            {% else %}
+                                <a href="#" class="btn btn-success btn-sm no-bold disabled" aria-disabled="true">Completada</a>
+                            {% endif %}
+                            <a href="{% url 'edit_task' task.id %}" class="btn btn-warning btn-sm no-bold">Editar</a>
+                            <a href="{% url 'delete_task' task.id %}" class="btn btn-danger btn-sm no-bold">Eliminar</a>
+                        </div>                  
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal para mostrar la información de la tarea -->
+            <div class="modal fade" id="taskModal{{ task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ task.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="taskModalLabel{{ task.id }}">
+                                {{ task.id }} - {{ task.title }}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Descripción:</strong></p>
+                            <p>{{ task.description }}</p>
+
+                            {% if task.due_date %}
+                                <p><strong>Fecha de vencimiento:</strong> {{ task.due_date }}</p>
+                            {% endif %}
+
+                            <p><strong>Prioridad:</strong> {{ task.priority }}</p>
+
+                            <p><strong>Estado:</strong> 
+                                <span class="{% if task.completed %}text-success{% else %}text-warning{% endif %}">
+                                    {% if task.completed %}Completada{% else %}Pendiente{% endif %}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary no-bold" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
