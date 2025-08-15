@@ -22,7 +22,6 @@ class SoftDeleteQuerySet(models.QuerySet):
     def dead(self):
         return self.filter(is_deleted=True)
 
-
 class SoftDeleteManager(models.Manager):
     def get_queryset(self):
         # Por defecto, solo registros NO eliminados

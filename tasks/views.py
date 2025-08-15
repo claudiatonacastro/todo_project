@@ -70,9 +70,6 @@ def task_list(request):
     )
 
 def delete_task(request, task_id):
-    """task = Task.objects.get(id=task_id)
-    task.delete()
-    return redirect('task_list')"""
     # ahora SOFT delete
     task = get_object_or_404(Task.all_objects, pk=task_id)  # acepta vivos y borrados
     task.soft_delete()
